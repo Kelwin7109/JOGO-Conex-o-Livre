@@ -78,6 +78,10 @@ button svg{width:18px;height:18px;stroke-width:2.4}
 .qr-code{width:128px;height:128px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:14px;display:flex;align-items:center;justify-content:center}
 .qr-code img{max-width:100%;height:auto}
 .qr-status{margin:8px 0 0;font-size:12px;color:var(--muted)}
+.qr-actions{display:flex;gap:9px;margin-top:10px}
+.qr-actions button{display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 12px}
+.qr-actions button:first-child{background:var(--blue);color:#fff}
+.qr-actions button:last-child{background:#eaf2f1;color:var(--navy)}
 .result-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
 .secondary{display:flex;align-items:center;justify-content:center;gap:9px;background:#eaf2f1;color:var(--navy)}
 .secondary:hover{background:#dcebe8}
@@ -85,8 +89,19 @@ button svg{width:18px;height:18px;stroke-width:2.4}
 footer{text-align:center;color:#70818a;font-size:12px;margin:22px 0 4px}
 @media(max-width:768px){body{padding:20px 14px}.panel{border-radius:22px}.teacher-form{grid-template-columns:1fr 150px}.teacher-field:last-child{grid-column:1/-1}.teacher-actions{align-items:flex-start;flex-direction:column}.teacher-actions button{width:100%;justify-content:center}}
 @media(max-width:620px){body{padding:16px 10px}.wrap{width:100%}.panel{border-radius:18px;padding:20px 16px}.levels{grid-template-columns:1fr 1fr}.level{padding:14px 8px}.answers{gap:9px}.answer{font-size:17px;padding:12px 8px}.result-actions{grid-template-columns:1fr}.topline{align-items:flex-start}.question{min-height:110px}}
-@media(max-width:520px){.qr-section{grid-template-columns:1fr}.qr-code{margin:0 auto}.qr-form{flex-direction:column}.qr-form button{width:100%;justify-content:center}.teacher-form{grid-template-columns:1fr}.teacher-field:last-child{grid-column:auto}.teacher-identity{padding:12px}.teacher-actions{width:100%}.teacher-actions button{width:100%}.teacher-status{width:100%}}
+@media(max-width:520px){.qr-section{grid-template-columns:1fr}.qr-code{margin:0 auto}.qr-form{flex-direction:column}.qr-form button{width:100%;justify-content:center}.qr-actions{flex-direction:column}.qr-actions button{width:100%}.teacher-form{grid-template-columns:1fr}.teacher-field:last-child{grid-column:auto}.teacher-identity{padding:12px}.teacher-actions{width:100%}.teacher-actions button{width:100%}.teacher-status{width:100%}}
 @media(max-width:400px){.levels{grid-template-columns:1fr}.level{display:flex;align-items:center;gap:10px;text-align:left}.dot{margin:0}.answers{grid-template-columns:1fr}.question{min-height:145px}}
+@media print{
+  body{background:#fff!important;padding:0!important}
+  body *{visibility:hidden}
+  .qr-section,.qr-section *{visibility:visible}
+  .qr-section{position:absolute;left:0;top:0;width:100%;display:grid;grid-template-columns:1fr 220px;border:0;padding:20px;margin:0}
+  .qr-section h3{font-size:28px}
+  .qr-section .eyebrow,.qr-section p{display:block}
+  .qr-form,.qr-actions,.qr-status{display:none!important}
+  .qr-code{width:220px;height:220px;margin:0 auto;border:2px solid #172f46}
+  .qr-code canvas,.qr-code img{width:200px!important;height:200px!important}
+}
 </style>
 </head>
 <body>
@@ -144,6 +159,10 @@ footer{text-align:center;color:#70818a;font-size:12px;margin:22px 0 4px}
       <div class="qr-form">
         <input id="urlInput" type="url" placeholder="https://seu-site.com/conexao-livre" aria-label="Endereço público da aplicação">
         <button id="generateQrBtn" type="button"><i data-lucide="qr-code"></i> GERAR QR</button>
+      </div>
+      <div class="qr-actions">
+        <button id="downloadQrBtn" type="button"><i data-lucide="download"></i> BAIXAR PNG</button>
+        <button id="printQrBtn" type="button"><i data-lucide="printer"></i> IMPRIMIR QR</button>
       </div>
       <p id="qrStatus" class="qr-status" aria-live="polite">Hospede este arquivo antes de compartilhar. O endereço file:// só funciona no seu computador.</p>
     </div>
@@ -233,6 +252,25 @@ function generateQrCode(){
     status.textContent="Não foi possível gerar. Use um endereço válido começando com https://.";
     status.style.color="#87451f";
   }
+}
+function downloadQrCode(){
+  const container=$("qrCode");
+  const canvas=container.querySelector("canvas");
+  const image=container.querySelector("img");
+  let dataUrl="";
+  if(canvas)dataUrl=canvas.toDataURL("image/png");
+  else if(image)dataUrl=image.src;
+  if(!dataUrl){
+    $("qrStatus").textContent="Gere o QR Code antes de baixar.";
+    $("qrStatus").style.color="#87451f";
+    return;
+  }
+  const link=document.createElement("a");
+  link.href=dataUrl;
+  link.download="qr-code-conexao-livre.png";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 }
 function loadTeacherReview(){
   try{
@@ -346,8 +384,14 @@ document.querySelectorAll(".answer").forEach(b=>b.addEventListener("click",()=>a
 $("startBtn").addEventListener("click",startGame);$("nextBtn").addEventListener("click",next);
 $("againBtn").addEventListener("click",startGame);$("homeBtn").addEventListener("click",()=>show("start"));
 $("generateQrBtn").addEventListener("click",generateQrCode);
+$("downloadQrBtn").addEventListener("click",downloadQrCode);
+$("printQrBtn").addEventListener("click",()=>window.print());
 $("saveTeacherReview").addEventListener("click",saveTeacherReview);
 loadTeacherReview();
+if(location.protocol==="http:"||location.protocol==="https:"){
+  $("urlInput").value=location.href;
+  generateQrCode();
+}
 </script>
 </body>
 </html>
