@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conexão Livre — Jogo da Liberdade de Expressão</title>
+<style>
+:root{--navy:#183247;--blue:#2d7187;--cream:#fff9ef;--paper:#fff;--green:#3d9b62;--yellow:#d6a62b;--dark:#27313b;--muted:#657681}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(140deg,#e6f3f4,#fff9ef 60%,#e8eefb);font-family:Arial,Helvetica,sans-serif;color:var(--navy);padding:24px}
+.wrap{max-width:850px;margin:0 auto}
+header{text-align:center;padding:16px 10px 22px}
+.logo{display:inline-flex;align-items:center;justify-content:center;width:58px;height:58px;border-radius:18px;background:var(--navy);color:white;font-size:28px;margin-bottom:10px}
+h1{margin:0;font-size:clamp(27px,5vw,42px);letter-spacing:-1px}
+.subtitle{margin:9px auto 0;color:var(--muted);font-size:16px;max-width:560px;line-height:1.5}
+.panel{background:rgba(255,255,255,.94);border:1px solid #e3e9e8;border-radius:22px;padding:clamp(20px,4vw,34px);box-shadow:0 15px 45px rgba(24,50,71,.09)}
+.hidden{display:none!important}
+.eyebrow{text-transform:uppercase;font-weight:700;letter-spacing:1.5px;font-size:11px;color:var(--blue)}
+h2{margin:8px 0 12px;font-size:25px}
+p{line-height:1.55}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}
+.level{border:2px solid #e2e8e8;border-radius:15px;padding:15px 10px;background:white;text-align:center;cursor:pointer;font-weight:700;color:var(--navy);transition:.15s}
+.level:hover,.level.selected{border-color:var(--blue);background:#eef8f8;transform:translateY(-2px)}
+.dot{display:block;width:13px;height:13px;border-radius:50%;margin:0 auto 8px}
+.green{background:#4caf50}.yellow{background:#f2c94c}.black{background:#252525}
+button{font:inherit;cursor:pointer;border:0;border-radius:13px;padding:14px 20px;font-weight:700;transition:.15s}
+.primary{background:var(--navy);color:white;width:100%;font-size:16px}
+.primary:hover{background:#254b63}
+.answer{background:#f1f6f6;color:var(--navy);border:2px solid #dbe6e7;min-height:58px;font-size:19px}
+.answer:hover{border-color:var(--blue);background:#eaf5f6}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+.topline{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:15px;color:var(--muted);font-size:13px;font-weight:700}
+.tag{padding:7px 11px;border-radius:99px;color:#fff;font-size:11px;letter-spacing:.6px}
+.tag.easy{background:var(--green)}.tag.medium{background:var(--yellow);color:#352800}.tag.hard{background:#252525}
+.progress{height:9px;border-radius:99px;background:#e8eeee;overflow:hidden;margin:10px 0 25px}
+.bar{height:100%;width:0;background:linear-gradient(90deg,#2d7187,#65b5b0);transition:width .25s}
+.question{font-size:clamp(21px,3.5vw,29px);line-height:1.35;min-height:120px;display:flex;align-items:center;margin:0}
+.feedback{margin-top:18px;border-radius:14px;padding:15px 17px;background:#edf7ef;color:#205c37;line-height:1.5}
+.feedback.wrong{background:#fff2e9;color:#87451f}
+.feedback strong{display:block;margin-bottom:3px}
+.next{margin-top:16px;width:100%;background:var(--blue);color:#fff}
+.score{font-size:52px;font-weight:800;margin:10px 0;color:var(--blue)}
+.result-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+.secondary{background:#edf3f4;color:var(--navy)}
+.small{font-size:13px;color:var(--muted)}
+footer{text-align:center;color:#70818a;font-size:12px;margin:18px 0 4px}
+@media(max-width:560px){body{padding:12px}.levels{grid-template-columns:1fr}.level{display:flex;align-items:center;gap:10px;text-align:left}.dot{margin:0}.answers{gap:9px}.answer{font-size:17px;padding:12px 8px}.result-actions{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="logo">💬</div>
+  <h1>Conexão Livre</h1>
+  <p class="subtitle">Um jogo para testar seus conhecimentos sobre liberdade de expressão e respeito na internet.</p>
+</header>
+
+<section class="panel" id="start">
+  <div class="eyebrow">Jogo educativo</div>
+  <h2>Até onde vai a liberdade de expressão?</h2>
+  <p>Escolha uma dificuldade e responda às perguntas com <b>SIM</b> ou <b>NÃO</b>. Cada acerto vale 1 ponto. No final, veja sua pontuação!</p>
+  <div class="levels">
+    <button class="level selected" data-level="all"><span class="dot" style="background:#2d7187"></span>Todas as dificuldades</button>
+    <button class="level" data-level="FÁCIL"><span class="dot green"></span>Fácil</button>
+    <button class="level" data-level="MÉDIO"><span class="dot yellow"></span>Médio</button>
+    <button class="level" data-level="DIFÍCIL"><span class="dot black"></span>Difícil</button>
+  </div>
+  <button class="primary" id="startBtn">COMEÇAR JOGO →</button>
+  <p class="small" style="text-align:center;margin-bottom:0">30 perguntas • 3 níveis • funciona no celular e no computador</p>
+</section>
+
+<section class="panel hidden" id="game">
+  <div class="topline"><span id="counter">PERGUNTA 1 DE 30</span><span id="levelTag" class="tag easy">FÁCIL</span></div>
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <p class="question" id="question"></p>
+  <div class="answers" id="answerButtons">
+    <button class="answer" data-answer="SIM">👍 SIM</button>
+    <button class="answer" data-answer="NÃO">👎 NÃO</button>
+  </div>
+  <div id="feedback" class="feedback hidden" aria-live="polite"></div>
+  <button id="nextBtn" class="next hidden">PRÓXIMA PERGUNTA →</button>
+</section>
+
+<section class="panel hidden" id="result">
+  <div class="eyebrow">Fim de jogo</div>
+  <h2 id="resultTitle">Mandou bem!</h2>
+  <div class="score"><span id="finalScore">0</span><span style="font-size:22px;color:#657681"> / <span id="total">30</span></span></div>
+  <p id="resultText"></p>
+  <div class="result-actions">
+    <button class="primary" id="againBtn">JOGAR NOVAMENTE</button>
+    <button class="secondary" id="homeBtn">VOLTAR AO INÍCIO</button>
+  </div>
+</section>
+<footer>Projeto escolar • Liberdade de expressão na internet</footer>
+</div>
+<script>
+const questions = [
+["FÁCIL","Você pode publicar sua opinião na internet, mesmo que outras pessoas pensem diferente?","SIM"],
+["FÁCIL","A liberdade de expressão permite dar sua opinião sobre um filme, jogo ou música?","SIM"],
+["FÁCIL","Você pode discordar de uma publicação sem ofender quem escreveu?","SIM"],
+["FÁCIL","Ter liberdade de expressão significa que todos precisam concordar com você?","NÃO"],
+["FÁCIL","Uma pessoa pode fazer uma crítica respeitosa nas redes sociais?","SIM"],
+["FÁCIL","Ameaçar alguém na internet é uma forma aceitável de expressar uma opinião?","NÃO"],
+["FÁCIL","Você pode denunciar uma publicação que contém ameaças?","SIM"],
+["FÁCIL","A liberdade de expressão também vale para opiniões diferentes da maioria?","SIM"],
+["FÁCIL","É correto espalhar uma mentira de propósito para prejudicar alguém?","NÃO"],
+["FÁCIL","Respeitar opiniões diferentes ajuda a manter uma boa convivência na internet?","SIM"],
+["MÉDIO","Uma rede social deve analisar o contexto antes de remover uma publicação que pode ser apenas uma crítica?","SIM"],
+["MÉDIO","Uma opinião impopular deve ser apagada apenas porque muitas pessoas discordam dela?","NÃO"],
+["MÉDIO","A inteligência artificial pode ajudar a identificar possíveis discursos de ódio nas redes?","SIM"],
+["MÉDIO","Uma inteligência artificial pode interpretar uma frase de maneira errada?","SIM"],
+["MÉDIO","Se uma IA marcar uma opinião como ofensiva, isso prova automaticamente que houve um crime?","NÃO"],
+["MÉDIO","Compartilhar informação falsa de propósito pode prejudicar o direito de outras pessoas à informação?","SIM"],
+["MÉDIO","Uma crítica a uma decisão de governo deve ser proibida só por ser negativa?","NÃO"],
+["MÉDIO","As regras de uma rede social podem limitar publicações que ameaçam ou perseguem pessoas?","SIM"],
+["MÉDIO","Apagar qualquer comentário de que o dono de uma página não goste é sempre uma atitude justa?","NÃO"],
+["MÉDIO","A IA pode ajudar a moderar conteúdos, desde que seus resultados sejam verificados por pessoas?","SIM"],
+["DIFÍCIL","A liberdade de expressão protege opiniões impopulares, mas não autoriza ameaças e perseguições?","SIM"],
+["DIFÍCIL","Uma plataforma deve permitir qualquer conteúdo, mesmo quando ele incentiva violência contra alguém?","NÃO"],
+["DIFÍCIL","Uma crítica a uma ideia ou autoridade deve ser automaticamente considerada discurso de ódio?","NÃO"],
+["DIFÍCIL","É correto deixar uma IA decidir sozinha quais opiniões podem aparecer na internet, sem revisão humana?","NÃO"],
+["DIFÍCIL","A moderação de conteúdo deve considerar o contexto, a intenção e os possíveis danos de uma publicação?","SIM"],
+["DIFÍCIL","Impedir toda opinião polêmica é uma forma equilibrada de proteger as pessoas na internet?","NÃO"],
+["DIFÍCIL","Uma pessoa deve poder contestar a remoção de sua publicação quando acredita que ela foi apagada injustamente?","SIM"],
+["DIFÍCIL","A liberdade de expressão elimina a responsabilidade pelas consequências do que alguém publica?","NÃO"],
+["DIFÍCIL","As redes sociais precisam equilibrar a liberdade de expressão com a proteção contra abusos?","SIM"],
+["DIFÍCIL","Usar inteligência artificial para moderar conteúdo significa que não são necessárias regras claras nem supervisão?","NÃO"]
+];
+let selectedLevel="all", round=[], index=0, score=0, answered=false;
+const $=id=>document.getElementById(id);
+document.querySelectorAll(".level").forEach(btn=>btn.addEventListener("click",()=>{
+  document.querySelectorAll(".level").forEach(b=>b.classList.remove("selected"));
+  btn.classList.add("selected"); selectedLevel=btn.dataset.level;
+}));
+function show(section){["start","game","result"].forEach(id=>$(id).classList.toggle("hidden",id!==section));}
+function startGame(){
+  round=questions.filter(q=>selectedLevel==="all"||q[0]===selectedLevel);
+  index=0;score=0;show("game");renderQuestion();
+}
+function renderQuestion(){
+  answered=false;
+  const q=round[index];
+  $("counter").textContent=`PERGUNTA ${index+1} DE ${round.length}`;
+  $("bar").style.width=`${index/round.length*100}%`;
+  $("question").textContent=q[1];
+  const tag=$("levelTag");tag.textContent=q[0];tag.className="tag "+(q[0]==="FÁCIL"?"easy":q[0]==="MÉDIO"?"medium":"hard");
+  $("feedback").classList.add("hidden");$("nextBtn").classList.add("hidden");$("answerButtons").classList.remove("hidden");
+  document.querySelectorAll(".answer").forEach(b=>b.disabled=false);
+}
+function answer(value){
+  if(answered)return;answered=true;
+  const correct=value===round[index][2];if(correct)score++;
+  $("answerButtons").classList.add("hidden");
+  const f=$("feedback");f.classList.remove("hidden","wrong");
+  if(!correct)f.classList.add("wrong");
+  f.innerHTML=`<strong>${correct?"✅ Resposta correta!":"❌ Não foi dessa vez."}</strong>A resposta certa é <b>${round[index][2]}</b>. ${round[index][2]==="SIM"?"A liberdade de expressão permite manifestar opiniões, respeitando os direitos das outras pessoas.":"A liberdade de expressão não significa que vale tudo: ameaças, perseguições e abusos podem ter consequências."}`;
+  $("nextBtn").textContent=index===round.length-1?"VER RESULTADO →":"PRÓXIMA PERGUNTA →";
+  $("nextBtn").classList.remove("hidden");
+}
+function next(){
+  index++;
+  if(index<round.length)renderQuestion();else finish();
+}
+function finish(){
+  show("result");$("finalScore").textContent=score;$("total").textContent=round.length;
+  const pct=score/round.length;
+  $("resultTitle").textContent=pct>=.8?"Parabéns! Você mandou muito bem!":pct>=.5?"Muito bom! Continue aprendendo!":"Boa tentativa! Que tal jogar de novo?";
+  $("resultText").textContent=`Você acertou ${score} de ${round.length} perguntas. ${pct>=.8?"Você demonstrou conhecer bem o tema!":"Revise as respostas e continue aprendendo sobre seus direitos e responsabilidades na internet."}`;
+}
+document.querySelectorAll(".answer").forEach(b=>b.addEventListener("click",()=>answer(b.dataset.answer)));
+$("startBtn").addEventListener("click",startGame);$("nextBtn").addEventListener("click",next);
+$("againBtn").addEventListener("click",startGame);$("homeBtn").addEventListener("click",()=>show("start"));
+</script>
+</body>
+</html>
