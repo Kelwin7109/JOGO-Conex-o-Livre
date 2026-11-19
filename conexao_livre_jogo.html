@@ -107,11 +107,11 @@ footer{text-align:center;color:#70818a;font-size:12px;margin:22px 0 4px}
   <div class="teacher-section">
     <div class="eyebrow">Área do professor</div>
     <h3 style="margin:7px 0 0;font-family:'Space Grotesk',Arial,sans-serif">Qual nota você daria para o Grupo do Kelwin da sala 3º 30?</h3>
-    <p class="small" style="margin:5px 0 0">Identifique o jogador, escolha uma nota de 0 a 8 e escreva o que achou da apresentação.</p>
+    <p class="small" style="margin:5px 0 0">Informe seu nome, a turma, uma nota de 0 a 8 e o que achou da apresentação.</p>
     <div class="teacher-form">
       <div class="teacher-field">
-        <label for="studentName">Nome do jogador</label>
-        <input id="studentName" type="text" maxlength="100" placeholder="Ex.: Maria Silva">
+        <label for="studentName">Nome do professor</label>
+        <input id="studentName" type="text" maxlength="100" placeholder="Ex.: Prof. Maria Silva">
       </div>
       <div class="teacher-field">
         <label for="studentClass">Turma</label>
@@ -254,7 +254,7 @@ async function saveTeacherReview(){
   const comment=commentInput.value.trim();
   const status=$("teacherStatus");
   if(!nome){
-    status.textContent="Informe o nome do jogador.";
+    status.textContent="Informe o nome do professor.";
     status.style.color="#87451f";
     nameInput.focus();
     return;
