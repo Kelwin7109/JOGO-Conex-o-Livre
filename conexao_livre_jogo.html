@@ -53,7 +53,7 @@ button svg{width:18px;height:18px;stroke-width:2.4}
 .next:hover{background:#1d6b74}
 .score{font-size:56px;font-weight:800;margin:10px 0;color:var(--blue);letter-spacing:-2px}
 .teacher-section{margin-top:26px;padding-top:24px;border-top:1px solid var(--line)}
-.teacher-form{display:grid;grid-template-columns:1fr 1fr 150px 1fr;gap:14px;margin-top:16px}
+.teacher-form{display:grid;grid-template-columns:150px 1fr;gap:14px;margin-top:16px}
 .teacher-field{display:flex;flex-direction:column;gap:7px}
 .teacher-field label{font-size:13px;font-weight:700;color:var(--navy)}
 .teacher-field input,.teacher-field textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 13px;font:inherit;color:var(--navy);background:#fff}
@@ -106,17 +106,9 @@ footer{text-align:center;color:#70818a;font-size:12px;margin:22px 0 4px}
   <p class="small" style="text-align:center;margin-bottom:0">30 perguntas • 3 níveis • funciona no celular e no computador</p>
   <div class="teacher-section">
     <div class="eyebrow">Área do professor</div>
-    <h3 style="margin:7px 0 0;font-family:'Space Grotesk',Arial,sans-serif">Avaliação do jogador</h3>
-    <p class="small" style="margin:5px 0 0">Depois de acompanhar a atividade, identifique o jogador e registre a avaliação.</p>
+    <h3 style="margin:7px 0 0;font-family:'Space Grotesk',Arial,sans-serif">Qual nota você dá para o Grupo do Kelwin da sala 3º 30?</h3>
+    <p class="small" style="margin:5px 0 0">Escolha uma nota de 0 a 8 e escreva o que achou da apresentação.</p>
     <div class="teacher-form">
-      <div class="teacher-field">
-        <label for="studentName">Nome do jogador</label>
-        <input id="studentName" type="text" maxlength="100" placeholder="Ex.: Maria Silva">
-      </div>
-      <div class="teacher-field">
-        <label for="studentClass">Turma</label>
-        <input id="studentClass" type="text" maxlength="50" placeholder="Ex.: 2º A">
-      </div>
       <div class="teacher-field">
         <label for="teacherGrade">Nota do professor (0 a 8)</label>
         <input id="teacherGrade" type="number" min="0" max="8" step="1" placeholder="Ex.: 8">
@@ -234,8 +226,6 @@ function loadTeacherReview(){
     const savedReview=localStorage.getItem("conexaoLivreTeacherReview");
     if(!savedReview)return;
     const review=JSON.parse(savedReview);
-    if(typeof review.nome==="string")$("studentName").value=review.nome;
-    if(typeof review.turma==="string")$("studentClass").value=review.turma;
     if(review.grade!==undefined)$("teacherGrade").value=review.grade;
     if(typeof review.comment==="string")$("teacherComment").value=review.comment;
     $("teacherStatus").textContent="Última avaliação recuperada deste dispositivo.";
@@ -244,27 +234,13 @@ function loadTeacherReview(){
   }
 }
 async function saveTeacherReview(){
-  const nameInput=$("studentName");
-  const classInput=$("studentClass");
   const gradeInput=$("teacherGrade");
   const commentInput=$("teacherComment");
-  const nome=nameInput.value.trim();
-  const turma=classInput.value.trim();
+  const nome="Grupo do Kelwin";
+  const turma="3º 30";
   const grade=Number(gradeInput.value);
   const comment=commentInput.value.trim();
   const status=$("teacherStatus");
-  if(!nome){
-    status.textContent="Informe o nome do jogador.";
-    status.style.color="#87451f";
-    nameInput.focus();
-    return;
-  }
-  if(!turma){
-    status.textContent="Informe a turma.";
-    status.style.color="#87451f";
-    classInput.focus();
-    return;
-  }
   if(gradeInput.value.trim()===""||!Number.isInteger(grade)||grade<0||grade>8){
     status.textContent="Informe uma nota inteira entre 0 e 8.";
     status.style.color="#87451f";
