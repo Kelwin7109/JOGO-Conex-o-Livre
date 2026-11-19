@@ -4,53 +4,89 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Conexão Livre — Jogo da Liberdade de Expressão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-:root{--navy:#183247;--blue:#2d7187;--cream:#fff9ef;--paper:#fff;--green:#3d9b62;--yellow:#d6a62b;--dark:#27313b;--muted:#657681}
+:root{--navy:#172f46;--blue:#247e88;--teal:#55b6a8;--cream:#f7fbf8;--paper:#fff;--green:#278a58;--yellow:#c58c16;--dark:#20303b;--muted:#637681;--line:#dce9e7;--shadow:0 24px 60px rgba(23,47,70,.12)}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:linear-gradient(140deg,#e6f3f4,#fff9ef 60%,#e8eefb);font-family:Arial,Helvetica,sans-serif;color:var(--navy);padding:24px}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 8% 8%,rgba(85,182,168,.2),transparent 30%),radial-gradient(circle at 92% 90%,rgba(36,126,136,.15),transparent 32%),linear-gradient(140deg,#e9f7f4,#f8fbf8 58%,#edf4fc);font-family:"DM Sans",Arial,sans-serif;color:var(--navy);padding:28px 20px}
 .wrap{max-width:850px;margin:0 auto}
-header{text-align:center;padding:16px 10px 22px}
-.logo{display:inline-flex;align-items:center;justify-content:center;width:58px;height:58px;border-radius:18px;background:var(--navy);color:white;font-size:28px;margin-bottom:10px}
-h1{margin:0;font-size:clamp(27px,5vw,42px);letter-spacing:-1px}
-.subtitle{margin:9px auto 0;color:var(--muted);font-size:16px;max-width:560px;line-height:1.5}
-.panel{background:rgba(255,255,255,.94);border:1px solid #e3e9e8;border-radius:22px;padding:clamp(20px,4vw,34px);box-shadow:0 15px 45px rgba(24,50,71,.09)}
+header{text-align:center;padding:8px 10px 28px}
+.logo{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:20px;background:linear-gradient(145deg,var(--navy),#285a70);color:white;margin-bottom:14px;box-shadow:0 12px 25px rgba(23,47,70,.2)}
+.logo svg{width:30px;height:30px;stroke-width:1.8}
+h1,h2{font-family:"Space Grotesk",Arial,sans-serif}
+h1{margin:0;font-size:clamp(30px,5vw,46px);letter-spacing:-1.8px}
+.subtitle{margin:10px auto 0;color:var(--muted);font-size:16px;max-width:560px;line-height:1.6}
+.panel{background:rgba(255,255,255,.9);border:1px solid rgba(220,233,231,.95);border-radius:26px;padding:clamp(22px,4vw,38px);box-shadow:var(--shadow);backdrop-filter:blur(8px)}
 .hidden{display:none!important}
-.eyebrow{text-transform:uppercase;font-weight:700;letter-spacing:1.5px;font-size:11px;color:var(--blue)}
-h2{margin:8px 0 12px;font-size:25px}
-p{line-height:1.55}
-.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}
-.level{border:2px solid #e2e8e8;border-radius:15px;padding:15px 10px;background:white;text-align:center;cursor:pointer;font-weight:700;color:var(--navy);transition:.15s}
-.level:hover,.level.selected{border-color:var(--blue);background:#eef8f8;transform:translateY(-2px)}
-.dot{display:block;width:13px;height:13px;border-radius:50%;margin:0 auto 8px}
-.green{background:#4caf50}.yellow{background:#f2c94c}.black{background:#252525}
-button{font:inherit;cursor:pointer;border:0;border-radius:13px;padding:14px 20px;font-weight:700;transition:.15s}
-.primary{background:var(--navy);color:white;width:100%;font-size:16px}
-.primary:hover{background:#254b63}
-.answer{background:#f1f6f6;color:var(--navy);border:2px solid #dbe6e7;min-height:58px;font-size:19px}
-.answer:hover{border-color:var(--blue);background:#eaf5f6}
+.eyebrow{text-transform:uppercase;font-weight:700;letter-spacing:1.6px;font-size:11px;color:var(--blue)}
+h2{margin:8px 0 12px;font-size:clamp(24px,4vw,30px);letter-spacing:-.7px}
+p{line-height:1.6}
+.levels{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}
+.level{border:1.5px solid var(--line);border-radius:17px;padding:17px 10px;background:rgba(255,255,255,.75);text-align:center;cursor:pointer;font-weight:700;color:var(--navy);transition:transform .2s,box-shadow .2s,border-color .2s,background .2s}
+.level:hover,.level.selected{border-color:var(--blue);background:#effaf8;transform:translateY(-3px);box-shadow:0 8px 18px rgba(36,126,136,.13)}
+.level:focus-visible,button:focus-visible{outline:3px solid rgba(36,126,136,.35);outline-offset:3px}
+.dot{display:block;width:13px;height:13px;border-radius:50%;margin:0 auto 9px;box-shadow:0 0 0 4px rgba(36,126,136,.08)}
+.green{background:#3cab70}.yellow{background:#e1b43c}.black{background:#2c3740}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px;padding:14px 20px;font-weight:700;transition:transform .2s,background .2s,box-shadow .2s}
+button:active{transform:translateY(1px)}
+.primary{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--navy);color:white;width:100%;font-size:15px;box-shadow:0 10px 20px rgba(23,47,70,.14)}
+.primary:hover{background:#28556c;box-shadow:0 13px 24px rgba(23,47,70,.2)}
+button svg{width:18px;height:18px;stroke-width:2.4}
+.answer{display:flex;align-items:center;justify-content:center;gap:10px;background:#f3f9f8;color:var(--navy);border:1.5px solid var(--line);min-height:62px;font-size:18px}
+.answer:hover{border-color:var(--blue);background:#eaf7f5;box-shadow:0 8px 16px rgba(36,126,136,.1)}
 .answers{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
 .topline{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:15px;color:var(--muted);font-size:13px;font-weight:700}
 .tag{padding:7px 11px;border-radius:99px;color:#fff;font-size:11px;letter-spacing:.6px}
-.tag.easy{background:var(--green)}.tag.medium{background:var(--yellow);color:#352800}.tag.hard{background:#252525}
-.progress{height:9px;border-radius:99px;background:#e8eeee;overflow:hidden;margin:10px 0 25px}
-.bar{height:100%;width:0;background:linear-gradient(90deg,#2d7187,#65b5b0);transition:width .25s}
-.question{font-size:clamp(21px,3.5vw,29px);line-height:1.35;min-height:120px;display:flex;align-items:center;margin:0}
-.feedback{margin-top:18px;border-radius:14px;padding:15px 17px;background:#edf7ef;color:#205c37;line-height:1.5}
-.feedback.wrong{background:#fff2e9;color:#87451f}
+.tag.easy{background:var(--green)}.tag.medium{background:var(--yellow);color:#352800}.tag.hard{background:#29343c}
+.progress{height:10px;border-radius:99px;background:#e6f0ee;overflow:hidden;margin:10px 0 25px}
+.bar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--teal));transition:width .25s}
+.question{font-size:clamp(21px,3.5vw,29px);line-height:1.35;min-height:120px;display:flex;align-items:center;margin:0;letter-spacing:-.4px}
+.feedback{display:flex;gap:10px;margin-top:18px;border-radius:16px;padding:16px 17px;background:#edf8f0;color:#205c37;line-height:1.5}
+.feedback svg{flex:0 0 auto;margin-top:2px}
+.feedback.wrong{background:#fff3ec;color:#87451f}
 .feedback strong{display:block;margin-bottom:3px}
-.next{margin-top:16px;width:100%;background:var(--blue);color:#fff}
-.score{font-size:52px;font-weight:800;margin:10px 0;color:var(--blue)}
+.next{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:16px;width:100%;background:var(--blue);color:#fff}
+.next:hover{background:#1d6b74}
+.score{font-size:56px;font-weight:800;margin:10px 0;color:var(--blue);letter-spacing:-2px}
+.teacher-section{margin-top:26px;padding-top:24px;border-top:1px solid var(--line)}
+.teacher-form{display:grid;grid-template-columns:150px 1fr;gap:14px;margin-top:16px}
+.teacher-field{display:flex;flex-direction:column;gap:7px}
+.teacher-field label{font-size:13px;font-weight:700;color:var(--navy)}
+.teacher-field input,.teacher-field textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 13px;font:inherit;color:var(--navy);background:#fff}
+.teacher-field input:focus,.teacher-field textarea:focus{outline:3px solid rgba(36,126,136,.2);border-color:var(--blue)}
+.teacher-field textarea{min-height:92px;resize:vertical}
+.teacher-actions{display:flex;align-items:center;gap:12px;margin-top:14px}
+.teacher-actions button{display:flex;align-items:center;gap:8px;background:var(--blue);color:#fff}
+.teacher-actions button:hover{background:#1d6b74}
+.teacher-status{margin:0;font-size:12px;color:var(--muted)}
+.qr-section{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;margin-top:26px;padding-top:24px;border-top:1px solid var(--line)}
+.qr-form{display:flex;gap:9px;margin-top:12px}
+.qr-form input{min-width:0;flex:1;border:1.5px solid var(--line);border-radius:12px;padding:12px 13px;font:inherit;color:var(--navy);background:#fff}
+.qr-form input:focus{outline:3px solid rgba(36,126,136,.2);border-color:var(--blue)}
+.qr-form button{display:flex;align-items:center;gap:7px;padding:12px 14px;background:var(--blue);color:#fff}
+.qr-form button:hover{background:#1d6b74}
+.qr-code{width:128px;height:128px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:14px;display:flex;align-items:center;justify-content:center}
+.qr-code img{max-width:100%;height:auto}
+.qr-status{margin:8px 0 0;font-size:12px;color:var(--muted)}
 .result-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
-.secondary{background:#edf3f4;color:var(--navy)}
+.secondary{display:flex;align-items:center;justify-content:center;gap:9px;background:#eaf2f1;color:var(--navy)}
+.secondary:hover{background:#dcebe8}
 .small{font-size:13px;color:var(--muted)}
-footer{text-align:center;color:#70818a;font-size:12px;margin:18px 0 4px}
-@media(max-width:560px){body{padding:12px}.levels{grid-template-columns:1fr}.level{display:flex;align-items:center;gap:10px;text-align:left}.dot{margin:0}.answers{gap:9px}.answer{font-size:17px;padding:12px 8px}.result-actions{grid-template-columns:1fr}}
+footer{text-align:center;color:#70818a;font-size:12px;margin:22px 0 4px}
+@media(max-width:620px){body{padding:16px 12px}.levels{grid-template-columns:1fr 1fr}.level{padding:14px 8px}.answers{gap:9px}.answer{font-size:17px;padding:12px 8px}.result-actions{grid-template-columns:1fr}}
+@media(max-width:520px){.qr-section{grid-template-columns:1fr}.qr-code{margin:0 auto}.qr-form{flex-direction:column}.qr-form button{justify-content:center}}
+@media(max-width:520px){.teacher-form{grid-template-columns:1fr}.teacher-actions{align-items:flex-start;flex-direction:column}}
+@media(max-width:400px){.levels{grid-template-columns:1fr}.level{display:flex;align-items:center;gap:10px;text-align:left}.dot{margin:0}.answers{grid-template-columns:1fr}.question{min-height:145px}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
-  <div class="logo">💬</div>
+  <div class="logo" aria-hidden="true"><i data-lucide="messages-square"></i></div>
   <h1>Conexão Livre</h1>
   <p class="subtitle">Um jogo para testar seus conhecimentos sobre liberdade de expressão e respeito na internet.</p>
 </header>
@@ -65,8 +101,40 @@ footer{text-align:center;color:#70818a;font-size:12px;margin:18px 0 4px}
     <button class="level" data-level="MÉDIO"><span class="dot yellow"></span>Médio</button>
     <button class="level" data-level="DIFÍCIL"><span class="dot black"></span>Difícil</button>
   </div>
-  <button class="primary" id="startBtn">COMEÇAR JOGO →</button>
+  <button class="primary" id="startBtn">COMEÇAR JOGO <i data-lucide="arrow-right"></i></button>
   <p class="small" style="text-align:center;margin-bottom:0">30 perguntas • 3 níveis • funciona no celular e no computador</p>
+  <div class="teacher-section">
+    <div class="eyebrow">Área do professor</div>
+    <h3 style="margin:7px 0 0;font-family:'Space Grotesk',Arial,sans-serif">Avaliação do jogador</h3>
+    <p class="small" style="margin:5px 0 0">Depois de acompanhar a atividade, informe uma nota de 0 a 8 e registre o que achou.</p>
+    <div class="teacher-form">
+      <div class="teacher-field">
+        <label for="teacherGrade">Nota do professor (0 a 8)</label>
+        <input id="teacherGrade" type="number" min="0" max="8" step="1" placeholder="Ex.: 8">
+      </div>
+      <div class="teacher-field">
+        <label for="teacherComment">O que você achou?</label>
+        <textarea id="teacherComment" placeholder="Escreva sua observação sobre a participação do jogador..."></textarea>
+      </div>
+    </div>
+    <div class="teacher-actions">
+      <button id="saveTeacherReview" type="button"><i data-lucide="save"></i> SALVAR AVALIAÇÃO</button>
+      <p id="teacherStatus" class="teacher-status" aria-live="polite">A avaliação será salva somente neste dispositivo.</p>
+    </div>
+  </div>
+  <div class="qr-section">
+    <div>
+      <div class="eyebrow">Acesso rápido</div>
+      <h3 style="margin:7px 0 0;font-family:'Space Grotesk',Arial,sans-serif">Compartilhe por QR Code</h3>
+      <p class="small" style="margin:5px 0 0">Cole o endereço público da aplicação para gerar um código que as pessoas poderão escanear.</p>
+      <div class="qr-form">
+        <input id="urlInput" type="url" placeholder="https://seu-site.com/conexao-livre" aria-label="Endereço público da aplicação">
+        <button id="generateQrBtn" type="button"><i data-lucide="qr-code"></i> GERAR QR</button>
+      </div>
+      <p id="qrStatus" class="qr-status" aria-live="polite">Hospede este arquivo antes de compartilhar. O endereço file:// só funciona no seu computador.</p>
+    </div>
+    <div id="qrCode" class="qr-code" aria-label="QR Code da aplicação"></div>
+  </div>
 </section>
 
 <section class="panel hidden" id="game">
@@ -74,11 +142,11 @@ footer{text-align:center;color:#70818a;font-size:12px;margin:18px 0 4px}
   <div class="progress"><div class="bar" id="bar"></div></div>
   <p class="question" id="question"></p>
   <div class="answers" id="answerButtons">
-    <button class="answer" data-answer="SIM">👍 SIM</button>
-    <button class="answer" data-answer="NÃO">👎 NÃO</button>
+    <button class="answer" data-answer="SIM"><i data-lucide="thumbs-up"></i> SIM</button>
+    <button class="answer" data-answer="NÃO"><i data-lucide="thumbs-down"></i> NÃO</button>
   </div>
   <div id="feedback" class="feedback hidden" aria-live="polite"></div>
-  <button id="nextBtn" class="next hidden">PRÓXIMA PERGUNTA →</button>
+  <button id="nextBtn" class="next hidden">PRÓXIMA PERGUNTA <i data-lucide="arrow-right"></i></button>
 </section>
 
 <section class="panel hidden" id="result">
@@ -87,8 +155,8 @@ footer{text-align:center;color:#70818a;font-size:12px;margin:18px 0 4px}
   <div class="score"><span id="finalScore">0</span><span style="font-size:22px;color:#657681"> / <span id="total">30</span></span></div>
   <p id="resultText"></p>
   <div class="result-actions">
-    <button class="primary" id="againBtn">JOGAR NOVAMENTE</button>
-    <button class="secondary" id="homeBtn">VOLTAR AO INÍCIO</button>
+    <button class="primary" id="againBtn">JOGAR NOVAMENTE <i data-lucide="rotate-ccw"></i></button>
+    <button class="secondary" id="homeBtn"><i data-lucide="house"></i> VOLTAR AO INÍCIO</button>
   </div>
 </section>
 <footer>Projeto escolar • Liberdade de expressão na internet</footer>
@@ -128,6 +196,62 @@ const questions = [
 ];
 let selectedLevel="all", round=[], index=0, score=0, answered=false;
 const $=id=>document.getElementById(id);
+lucide.createIcons();
+function generateQrCode(){
+  const input=$("urlInput");
+  const status=$("qrStatus");
+  const url=input.value.trim() || (location.protocol==="http:"||location.protocol==="https:"?location.href:"");
+  if(!url){
+    status.textContent="Informe um endereço público (começando com https://) para gerar o QR Code.";
+    status.style.color="#87451f";
+    input.focus();
+    return;
+  }
+  try{
+    const parsedUrl=new URL(url);
+    if(parsedUrl.protocol!=="http:"&&parsedUrl.protocol!=="https:")throw new Error("URL não pública");
+    $("qrCode").replaceChildren();
+    new QRCode($("qrCode"),{text:parsedUrl.href,width:112,height:112,colorDark:"#172f46",colorLight:"#ffffff"});
+    status.textContent="QR Code pronto. Escaneie com a câmera do celular.";
+    status.style.color="var(--green)";
+  }catch(error){
+    status.textContent="Não foi possível gerar. Use um endereço válido começando com https://.";
+    status.style.color="#87451f";
+  }
+}
+function loadTeacherReview(){
+  try{
+    const savedReview=localStorage.getItem("conexaoLivreTeacherReview");
+    if(!savedReview)return;
+    const review=JSON.parse(savedReview);
+    if(review.grade!==undefined)$("teacherGrade").value=review.grade;
+    if(typeof review.comment==="string")$("teacherComment").value=review.comment;
+    $("teacherStatus").textContent="Avaliação salva neste dispositivo. Você pode atualizá-la quando quiser.";
+  }catch(error){
+    $("teacherStatus").textContent="Não foi possível carregar a avaliação salva neste dispositivo.";
+  }
+}
+function saveTeacherReview(){
+  const gradeInput=$("teacherGrade");
+  const commentInput=$("teacherComment");
+  const grade=Number(gradeInput.value);
+  const comment=commentInput.value.trim();
+  const status=$("teacherStatus");
+  if(gradeInput.value.trim()===""||!Number.isInteger(grade)||grade<0||grade>8){
+    status.textContent="Informe uma nota inteira entre 0 e 8.";
+    status.style.color="#87451f";
+    gradeInput.focus();
+    return;
+  }
+  try{
+    localStorage.setItem("conexaoLivreTeacherReview",JSON.stringify({grade,comment}));
+    status.textContent="Avaliação salva neste dispositivo.";
+    status.style.color="var(--green)";
+  }catch(error){
+    status.textContent="Não foi possível salvar. Verifique as permissões do navegador.";
+    status.style.color="#87451f";
+  }
+}
 document.querySelectorAll(".level").forEach(btn=>btn.addEventListener("click",()=>{
   document.querySelectorAll(".level").forEach(b=>b.classList.remove("selected"));
   btn.classList.add("selected"); selectedLevel=btn.dataset.level;
@@ -153,9 +277,10 @@ function answer(value){
   $("answerButtons").classList.add("hidden");
   const f=$("feedback");f.classList.remove("hidden","wrong");
   if(!correct)f.classList.add("wrong");
-  f.innerHTML=`<strong>${correct?"✅ Resposta correta!":"❌ Não foi dessa vez."}</strong>A resposta certa é <b>${round[index][2]}</b>. ${round[index][2]==="SIM"?"A liberdade de expressão permite manifestar opiniões, respeitando os direitos das outras pessoas.":"A liberdade de expressão não significa que vale tudo: ameaças, perseguições e abusos podem ter consequências."}`;
-  $("nextBtn").textContent=index===round.length-1?"VER RESULTADO →":"PRÓXIMA PERGUNTA →";
+  f.innerHTML=`<i data-lucide="${correct?"check-circle-2":"x-circle"}"></i><div><strong>${correct?"Resposta correta!":"Não foi dessa vez."}</strong>A resposta certa é <b>${round[index][2]}</b>. ${round[index][2]==="SIM"?"A liberdade de expressão permite manifestar opiniões, respeitando os direitos das outras pessoas.":"A liberdade de expressão não significa que vale tudo: ameaças, perseguições e abusos podem ter consequências."}</div>`;
+  $("nextBtn").innerHTML=index===round.length-1?'VER RESULTADO <i data-lucide="trophy"></i>':'PRÓXIMA PERGUNTA <i data-lucide="arrow-right"></i>';
   $("nextBtn").classList.remove("hidden");
+  lucide.createIcons();
 }
 function next(){
   index++;
@@ -166,10 +291,14 @@ function finish(){
   const pct=score/round.length;
   $("resultTitle").textContent=pct>=.8?"Parabéns! Você mandou muito bem!":pct>=.5?"Muito bom! Continue aprendendo!":"Boa tentativa! Que tal jogar de novo?";
   $("resultText").textContent=`Você acertou ${score} de ${round.length} perguntas. ${pct>=.8?"Você demonstrou conhecer bem o tema!":"Revise as respostas e continue aprendendo sobre seus direitos e responsabilidades na internet."}`;
+  lucide.createIcons();
 }
 document.querySelectorAll(".answer").forEach(b=>b.addEventListener("click",()=>answer(b.dataset.answer)));
 $("startBtn").addEventListener("click",startGame);$("nextBtn").addEventListener("click",next);
 $("againBtn").addEventListener("click",startGame);$("homeBtn").addEventListener("click",()=>show("start"));
+$("generateQrBtn").addEventListener("click",generateQrCode);
+$("saveTeacherReview").addEventListener("click",saveTeacherReview);
+loadTeacherReview();
 </script>
 </body>
 </html>
