@@ -53,7 +53,7 @@ button svg{width:18px;height:18px;stroke-width:2.4}
 .next:hover{background:#1d6b74}
 .score{font-size:56px;font-weight:800;margin:10px 0;color:var(--blue);letter-spacing:-2px}
 .teacher-section{margin-top:26px;padding-top:24px;border-top:1px solid var(--line)}
-.teacher-form{display:grid;grid-template-columns:150px 1fr;gap:14px;margin-top:16px}
+.teacher-form{display:grid;grid-template-columns:1fr 1fr 150px 1fr;gap:14px;margin-top:16px}
 .teacher-field{display:flex;flex-direction:column;gap:7px}
 .teacher-field label{font-size:13px;font-weight:700;color:var(--navy)}
 .teacher-field input,.teacher-field textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 13px;font:inherit;color:var(--navy);background:#fff}
@@ -79,6 +79,7 @@ button svg{width:18px;height:18px;stroke-width:2.4}
 footer{text-align:center;color:#70818a;font-size:12px;margin:22px 0 4px}
 @media(max-width:620px){body{padding:16px 12px}.levels{grid-template-columns:1fr 1fr}.level{padding:14px 8px}.answers{gap:9px}.answer{font-size:17px;padding:12px 8px}.result-actions{grid-template-columns:1fr}}
 @media(max-width:520px){.qr-section{grid-template-columns:1fr}.qr-code{margin:0 auto}.qr-form{flex-direction:column}.qr-form button{justify-content:center}}
+@media(max-width:720px){.teacher-form{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.teacher-form{grid-template-columns:1fr}.teacher-actions{align-items:flex-start;flex-direction:column}}
 @media(max-width:400px){.levels{grid-template-columns:1fr}.level{display:flex;align-items:center;gap:10px;text-align:left}.dot{margin:0}.answers{grid-template-columns:1fr}.question{min-height:145px}}
 </style>
@@ -106,8 +107,16 @@ footer{text-align:center;color:#70818a;font-size:12px;margin:22px 0 4px}
   <div class="teacher-section">
     <div class="eyebrow">Área do professor</div>
     <h3 style="margin:7px 0 0;font-family:'Space Grotesk',Arial,sans-serif">Avaliação do jogador</h3>
-    <p class="small" style="margin:5px 0 0">Depois de acompanhar a atividade, informe uma nota de 0 a 8 e registre o que achou.</p>
+    <p class="small" style="margin:5px 0 0">Depois de acompanhar a atividade, identifique o jogador e registre a avaliação.</p>
     <div class="teacher-form">
+      <div class="teacher-field">
+        <label for="studentName">Nome do jogador</label>
+        <input id="studentName" type="text" maxlength="100" placeholder="Ex.: Maria Silva">
+      </div>
+      <div class="teacher-field">
+        <label for="studentClass">Turma</label>
+        <input id="studentClass" type="text" maxlength="50" placeholder="Ex.: 2º A">
+      </div>
       <div class="teacher-field">
         <label for="teacherGrade">Nota do professor (0 a 8)</label>
         <input id="teacherGrade" type="number" min="0" max="8" step="1" placeholder="Ex.: 8">
@@ -119,7 +128,7 @@ footer{text-align:center;color:#70818a;font-size:12px;margin:22px 0 4px}
     </div>
     <div class="teacher-actions">
       <button id="saveTeacherReview" type="button"><i data-lucide="save"></i> SALVAR AVALIAÇÃO</button>
-      <p id="teacherStatus" class="teacher-status" aria-live="polite">A avaliação será salva somente neste dispositivo.</p>
+      <p id="teacherStatus" class="teacher-status" aria-live="polite">A avaliação será enviada para a planilha compartilhada.</p>
     </div>
   </div>
   <div class="qr-section">
@@ -196,6 +205,7 @@ const questions = [
 ];
 let selectedLevel="all", round=[], index=0, score=0, answered=false;
 const $=id=>document.getElementById(id);
+const teacherReviewUrl="https://script.google.com/macros/s/AKfycbznR_PaqfK-TS0P9rIfQhSq7gT45_0CIbvsAC1F0quDVwJ54KOT4knb8mBtRMsP1F-g/exec";
 lucide.createIcons();
 function generateQrCode(){
   const input=$("urlInput");
@@ -224,31 +234,57 @@ function loadTeacherReview(){
     const savedReview=localStorage.getItem("conexaoLivreTeacherReview");
     if(!savedReview)return;
     const review=JSON.parse(savedReview);
+    if(typeof review.nome==="string")$("studentName").value=review.nome;
+    if(typeof review.turma==="string")$("studentClass").value=review.turma;
     if(review.grade!==undefined)$("teacherGrade").value=review.grade;
     if(typeof review.comment==="string")$("teacherComment").value=review.comment;
-    $("teacherStatus").textContent="Avaliação salva neste dispositivo. Você pode atualizá-la quando quiser.";
+    $("teacherStatus").textContent="Última avaliação recuperada deste dispositivo.";
   }catch(error){
     $("teacherStatus").textContent="Não foi possível carregar a avaliação salva neste dispositivo.";
   }
 }
-function saveTeacherReview(){
+async function saveTeacherReview(){
+  const nameInput=$("studentName");
+  const classInput=$("studentClass");
   const gradeInput=$("teacherGrade");
   const commentInput=$("teacherComment");
+  const nome=nameInput.value.trim();
+  const turma=classInput.value.trim();
   const grade=Number(gradeInput.value);
   const comment=commentInput.value.trim();
   const status=$("teacherStatus");
+  if(!nome){
+    status.textContent="Informe o nome do jogador.";
+    status.style.color="#87451f";
+    nameInput.focus();
+    return;
+  }
+  if(!turma){
+    status.textContent="Informe a turma.";
+    status.style.color="#87451f";
+    classInput.focus();
+    return;
+  }
   if(gradeInput.value.trim()===""||!Number.isInteger(grade)||grade<0||grade>8){
     status.textContent="Informe uma nota inteira entre 0 e 8.";
     status.style.color="#87451f";
     gradeInput.focus();
     return;
   }
+  status.textContent="Enviando avaliação para a planilha...";
+  status.style.color="var(--muted)";
   try{
-    localStorage.setItem("conexaoLivreTeacherReview",JSON.stringify({grade,comment}));
-    status.textContent="Avaliação salva neste dispositivo.";
+    await fetch(teacherReviewUrl,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({nome,turma,nota:grade,observacao:comment})
+    });
+    localStorage.setItem("conexaoLivreTeacherReview",JSON.stringify({nome,turma,grade,comment}));
+    status.textContent="Avaliação enviada para a planilha compartilhada.";
     status.style.color="var(--green)";
   }catch(error){
-    status.textContent="Não foi possível salvar. Verifique as permissões do navegador.";
+    status.textContent="Não foi possível enviar. Verifique o endpoint e sua conexão.";
     status.style.color="#87451f";
   }
 }
